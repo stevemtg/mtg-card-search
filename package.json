@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "An Electron application to search through a digital mtg collection",
   "main": "main.js",
+  "productName": "MTG Card Search",
   "scripts": {
-    "start": "electron ."
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "repository": "",
   "keywords": [
@@ -15,15 +18,72 @@
     "application"
   ],
   "author": "SteveMTG",
-  "license": "GNU General Public License GPLv3",
+  "license": "AGPL-3.0-or-later",
   "devDependencies": {
-    "electron": "^14.0.1"
+    "@electron-forge/cli": "^6.0.0-beta.61",
+    "@electron-forge/maker-deb": "^6.0.0-beta.61",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.61",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
+    "@electron-forge/maker-zip": "^6.0.0-beta.61",
+    "electron": "latest"
   },
   "dependencies": {
-    "chokidar": "^3.5.2",
-    "drag-drop": "^7.2.0",
-    "find": "^0.3.0",
-    "fs-extra": "^10.0.0",
-    "open": "^8.2.1"
+    "electron-squirrel-startup": "^1.0.0",
+    "find": "^0.3.0"
+  },
+  "build": {
+    "appId": "com.stevemtg.mtgcardsearch",
+    "category": "app.category.type",
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "squirrel",
+      "icon": "build/icon.ico"
+    }
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "mtg_card_search"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
   }
 }
