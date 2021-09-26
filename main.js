@@ -51,8 +51,8 @@ ipc.on('findImages', function(event, data){
     // Search for a file.
     var foundFileName = "";
     allFiles.forEach(fileName => {
-      fileNameString = "" + fileName;
-      if(fileNameString.toLowerCase().includes(inputLine.toLowerCase())) {
+      var imageName = "" + getFileNameFromPath(fileName);
+      if(imageName.toLowerCase().includes(inputLine.toLowerCase())) {
         foundFileName = fileName;
         card.filePath = fileName;
         card.styleID = inputLine.replace(/\s/g, '');//remove empty space from search term to use as id.
@@ -135,7 +135,7 @@ function createWindow () {
   mainWindow.loadFile('index.html')
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
