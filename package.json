@@ -1,0 +1,29 @@
+{
+  "name": "mtg-card-search",
+  "version": "1.0.0",
+  "description": "An Electron application to search through a digital mtg collection",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "",
+  "keywords": [
+    "mtg",
+    "search",
+    "tool",
+    "app",
+    "application"
+  ],
+  "author": "SteveMTG",
+  "license": "GNU General Public License GPLv3",
+  "devDependencies": {
+    "electron": "^14.0.1"
+  },
+  "dependencies": {
+    "chokidar": "^3.5.2",
+    "drag-drop": "^7.2.0",
+    "find": "^0.3.0",
+    "fs-extra": "^10.0.0",
+    "open": "^8.2.1"
+  }
+}

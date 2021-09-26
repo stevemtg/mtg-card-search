@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>MTG Card Search</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="bootstrap-5.1.1-dist/css/bootstrap.css" />
+  </head>
+  <body>
+
+    <div class="container">
+      <h1 id="main-header">MTG Card Search</h1>
+    </div>
+
+    <hr>
+    <div class="container">
+      <div><b>STEP 1:</b> Select a folder to search for card images</div>
+      <div class="row">
+        <div class="col-sm-3">
+          <button type="button" class="btn btn-primary" id="getFilePathButton">Select Image Directory</button>
+        </div>
+        <div class="col-sm-9 path-selection">
+          <div id ="searchPath"> </div>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+    <div class="container">
+      <div><b>STEP 2:</b> Select an output location (where your selected images will be copied for upload to MPC) </div>
+      <div class="row">
+        <div class="col-sm-3">
+          <button type="button" class="btn btn-primary" id="getCopyPathButton">Select Output Directory</button>
+        </div>
+        <div class="col-sm-9 path-selection">
+          <div id ="copyPath"> </div>
+        </div>
+      </div>
+    </div>
+
+
+    <hr>
+    <div class="container">
+      <div><b>STEP 3:</b> Find your list of cards</div>
+      <h2>Card List:</h2>
+      <textarea id="findImagesInput" name="message" rows="10" cols="60" placeholder="4x Rite of Flame
+4x Brainstorm
+3x Mox Opal
+1x Empty the Warrens
+6x t:Goblin"></textarea>
+      <br>
+      <button type="button" class="btn btn-primary" id="findImagesButton">Submit</button>
+    </div>
+
+
+
+
+    <hr>
+    <div class="container">
+      <div><b>STEP 4:</b> Copy your cards to the output folder for upload to MPC (Note: Double check the results below)</div>
+    <button type="button" class="btn btn-primary" id="copyImagesButton">Copy Images</button>
+    </div>
+
+
+    <hr>
+    <div class="container">
+      <h3> Preview </h3>
+      <div id='preview'></div>
+    </div>
+    <hr>
+
+    <!--
+    <div id="response-title"> Debug output: </div>
+    <div id='response'></div>
+    -->
+
+    <!--
+    <div style="margin-top: 100px;">
+        We are using Node.js <span id="node-version"></span>,
+        Chromium <span id="chrome-version"></span>,
+        and Electron <span id="electron-version"></span>.
+    </div>
+    -->
+
+    <!-- Card Modal -->
+    <div class="modal fade" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cardModalLabel">Select a Card</h5>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">X</button>
+          </div>
+          <div class="modal-body">
+            <div id="art-options">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading div for the find images function  -->
+    <div id="loading-img"><h2 class="loading-img-text">Loading...</h2></div>
+
+    <!-- You can also require other files to run in this process -->
+    <script src="./renderer.js"></script>
+    <script src="./bootstrap-5.1.1-dist/js/bootstrap.js"></script>
+  </body>
+</html>

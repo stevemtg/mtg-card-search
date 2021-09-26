@@ -1,0 +1,42 @@
+#main-header {
+  margin-top: 12px;
+}
+
+#response {
+  margin: 8px;
+  border-width: 1px;
+  border-color: black;
+}
+
+#response-title {
+  margin-top: 12px;
+}
+
+.card-image {
+  height: 748px;
+  width: 548px;
+}
+
+.path-selection {
+  border-style: solid;
+}
+
+.card-img {
+  cursor: pointer;
+}
+
+#loading-img {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  padding-left:45%;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: rgb(249,249,249, 0.7);
+  display: none;
+}
+.loading-img-text {
+  position: fixed;
+  top:50%;
+}
