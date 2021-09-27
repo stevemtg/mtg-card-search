@@ -12,9 +12,12 @@ Application to search for card images in large collections.
 # How to Build 
 https://www.electronforge.io/cli
 
-Install electron forge with: 
-**npm install --save-dev @electron-forge/cli**
+Run install command: 
+**npm install**
 
-Window Build Command:
+Windows Build Command:
 **npx electron-forge make --arch=ia32**
+
+Mac Build Command:
+*npm run make-mac*
 
