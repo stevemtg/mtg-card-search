@@ -46,16 +46,38 @@ ipc.on('findImages', function(event, data){
 
   //Start of the search for files.
   data.forEach(inputLine => {
+    inputLine = inputLine.trim();
+
+    // Different sites have different sideboard formats.
+    // Look for the word "sideboard" or lines that start with a double slash and skip them.
+    if (/Sideboard/i.test(inputLine) || /^\/\//.test(inputLine) || inputLine === '') {
+        return;
+    }
+
     card = {searchTerm:inputLine, filePath:"", alternateFiles:[]};
+
+    // Extract the quantity and card name.
+    // Cockatrice prefixes lines with "SB:" for sideboard cards, so optionally matching that.
+    // MTGA's export format puts the set and collector number in the line. ex. Arid Mesa (ZEN) 211
+    let extract = /^(?:SB:\s)?(?:(\d+)?x?\s)?([^(]+)(?:\s\(.+\) .+)?$/i.exec(inputLine);
+    if (extract === null) {
+      console.warn(`Failed to parse line: ${inputLine}`);
+      return;
+    }
+
+    let [, quantity, inputCardName] = extract;
 
     // Search for a file.
     var foundFileName = "";
     allFiles.forEach(fileName => {
       var imageName = "" + getFileNameFromPath(fileName);
-      if(imageName.toLowerCase().includes(inputLine.toLowerCase())) {
+
+      if (normalizeCardName(imageName).includes(normalizeCardName(inputCardName))) {
         foundFileName = fileName;
         card.filePath = fileName;
-        card.styleID = inputLine.replace(/\s/g, '');//remove empty space from search term to use as id.
+        // FIXME: This will have issues with multiple lines of the same value.
+        // FIXME: Which is potentially useful for getting multiple editions of the same card name.
+        card.styleID = normalizeCardName(inputLine).replace(/\s/g, '');//remove empty space from search term to use as id.
         card.alternateFiles.push(fileName);
         return;
       }
@@ -114,6 +136,28 @@ var walk = function(dir) {
         }
     });
     return results;
+}
+
+/**
+ * There are a number of issues with card name input.
+ * The below tries to tackle some of the obvious ones, but it'll probably depend on the drive's format too.
+ */
+var normalizeCardName = function(cardName) {
+  return cardName
+      // Convert diacritics down.
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+
+      // Fix those dumb apostrophes.
+      .replace(/’/g, `'`)
+
+      // Remove some common characters that are or aren't in some drives.
+      // Split cards are a recurring issue, so you might have to be more aggressive with spaces and slashes.
+      .replaceAll('_', '')
+      .replaceAll(`'`, '')
+      .replaceAll('/', '')
+
+      .toLowerCase();
 }
 
 
