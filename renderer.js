@@ -47,7 +47,7 @@ const findImagesInput = document.getElementById('findImagesInput');
 
 const rowElem = "<div class='row'>";
 const imgElem = "<div class='col-sm-4'>"
-                  + "<img id='[#STYLEID]' class='img-fluid card-img' src='[#IMAGEPATH]' data-bs-toggle='modal' data-bs-target='#cardModal'>"
+                  + "<img id='[#STYLEID]' class='img-fluid card-img lazy' data-src='[#IMAGEPATH]' data-bs-toggle='modal' data-bs-target='#cardModal'>"
                   +"<p>[#SEARCHTERM]</p>"
                   +"</div>";
 const endRowElem = "</div>";
@@ -90,10 +90,14 @@ function RefreshCardPreview() {
   resultsHTML += endRowElem;
   document.getElementById('preview').innerHTML = resultsHTML;
 
+  ll.update();
+
   // Prepare Card Preview Onclick events for art selection
+  cardCount = 0;
   AllCards.forEach(card => {
     var newCardElement = document.getElementById(card.styleID);
     newCardElement.onclick = OpenModal;
+    cardCount++;
   });
 }
 
@@ -129,6 +133,7 @@ function PrepareCardModal(selectedCard) {
   var resultsHTML = "";
   resultsHTML += rowElem;
   for (let i = 0; i < selectedCard.alternateFiles.length; i++) {
+    console.log("selectedCard.alternateFiles.length: " + selectedCard.alternateFiles.length);
     var altFileImg = selectedCard.alternateFiles[i];
     var altFileImgName = getFileNameFromPath(selectedCard.alternateFiles[i]);
     var altFileStyle = selectedCard.styleID + cardCount;
@@ -145,6 +150,8 @@ function PrepareCardModal(selectedCard) {
   }
   resultsHTML += endRowElem;
   document.getElementById('art-options').innerHTML = resultsHTML;
+
+  ll.update();
 
   // Prepare Card Onclick events for alt art selection
   var cardCount = 0;
@@ -197,4 +204,53 @@ copyImagesButton.addEventListener('click', function(){
       alert("Copying images completed");
     })
     ipc.send('copyImages', "placeholder data");
+});
+
+
+//-------------------------------------------
+// Lazy Load Images
+//-------------------------------------------
+
+function logElementEvent(eventName, element) {
+  console.log(Date.now(), eventName, element.getAttribute("data-src"));
+}
+
+var callback_enter = function (element) {
+  //logElementEvent("🔑 ENTERED", element);
+};
+var callback_exit = function (element) {
+  //logElementEvent("🚪 EXITED", element);
+};
+var callback_loading = function (element) {
+  //logElementEvent("⌚ LOADING", element);
+};
+var callback_loaded = function (element) {
+  //logElementEvent("👍 LOADED", element);
+};
+var callback_error = function (element) {
+  logElementEvent("💀 ERROR", element);
+  element.src = "https://via.placeholder.com/440x560/?text=Error+Placeholder";
+};
+var callback_finish = function () {
+  //logElementEvent("✔️ FINISHED", document.documentElement);
+};
+var callback_cancel = function (element) {
+  //logElementEvent("🔥 CANCEL", element);
+};
+
+var ll = new LazyLoad({
+  class_applied: "lz-applied",
+  class_loading: "lz-loading",
+  class_loaded: "lz-loaded",
+  class_error: "lz-error",
+  class_entered: "lz-entered",
+  class_exited: "lz-exited",
+  // Assign the callbacks defined above
+  callback_enter: callback_enter,
+  callback_exit: callback_exit,
+  callback_cancel: callback_cancel,
+  callback_loading: callback_loading,
+  callback_loaded: callback_loaded,
+  callback_error: callback_error,
+  callback_finish: callback_finish
 });

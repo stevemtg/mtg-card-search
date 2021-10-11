@@ -45,6 +45,7 @@ ipc.on('findImages', function(event, data){
   cards = [];
 
   //Start of the search for files.
+  var cardCount = 0;
   data.forEach(inputLine => {
     inputLine = inputLine.trim();
 
@@ -75,14 +76,16 @@ ipc.on('findImages', function(event, data){
       if (normalizeCardName(imageName).includes(normalizeCardName(inputCardName))) {
         foundFileName = fileName;
         card.filePath = fileName;
-        // FIXME: This will have issues with multiple lines of the same value.
-        // FIXME: Which is potentially useful for getting multiple editions of the same card name.
-        card.styleID = normalizeCardName(inputLine).replace(/\s/g, '');//remove empty space from search term to use as id.
+        // Add a number to the end of each ID to make them unique for multiples of the same card name.
+        card.styleID = normalizeCardName(inputLine).replace(/\s/g, '') + "----" + cardCount; //remove empty space from search term to use as id.
         card.alternateFiles.push(fileName);
         return;
       }
     });
+
+
     cards.push(card);
+    cardCount++;
   });
 
   event.sender.send('actionReply', cards);
@@ -90,10 +93,11 @@ ipc.on('findImages', function(event, data){
 
 ipc.on('copyImages', function(event, data){
   var errors = "";
+  var cardCount = 0;
   for (let i = 0; i < cards.length; i++) {
     card = cards[i];
     var imageName = getFileNameFromPath(card.filePath);
-    var copyLocation = selectedCopyPath+"\\"+imageName;
+    var copyLocation = selectedCopyPath + "\\" + cardCount + "_" + imageName;
 
     fs.copyFile(card.filePath, copyLocation, (err) => {
       if (err) {
@@ -104,7 +108,7 @@ ipc.on('copyImages', function(event, data){
         //console.log("\nFile copied");
       }
     });
-
+    cardCount++;
   }
 
   event.sender.send('actionReply', errors);
@@ -179,7 +183,7 @@ function createWindow () {
   mainWindow.loadFile('index.html')
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished

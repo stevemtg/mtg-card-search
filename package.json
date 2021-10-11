@@ -1,15 +1,15 @@
 {
   "name": "mtg-card-search",
   "productName": "MTG Card Search",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An Electron application to search through a digital mtg collection",
   "main": "main.js",
-  "productName": "MTG Card Search",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "make-mac": "electron-forge make --platform darwin"
+    "make-mac": "electron-forge make --platform darwin",
+    "make-win": "electron-forge make --arch=ia32"
   },
   "repository": "",
   "keywords": [
