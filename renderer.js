@@ -5,6 +5,7 @@
 // `nodeIntegration` is turned off. Use `preload.js` to
 // selectively enable features needed in the rendering
 // process.
+const sizeOf = require('image-size');
 
 // Static storage of card list:
 var AllCards = [];
@@ -133,13 +134,25 @@ function PrepareCardModal(selectedCard) {
   var resultsHTML = "";
   resultsHTML += rowElem;
   for (let i = 0; i < selectedCard.alternateFiles.length; i++) {
-    console.log("selectedCard.alternateFiles.length: " + selectedCard.alternateFiles.length);
+
     var altFileImg = selectedCard.alternateFiles[i];
     var altFileImgName = getFileNameFromPath(selectedCard.alternateFiles[i]);
     var altFileStyle = selectedCard.styleID + cardCount;
+
+    // Calculate PPI
+    var ppi = 0;
+    // Get the image dims
+    var dimensions = sizeOf(altFileImg);
+    //console.log("height: " + dimensions.height + " width: " + dimensions.width);
+    var pixelDiag = Math.sqrt( ((dimensions.height * dimensions.height)
+                                + (dimensions.width * dimensions.width)) );
+    ppi = Math.trunc(pixelDiag / 4.3); //4.3 is the mtg card size diagonal
+    //--------------------
+
+
     imgElemPrepared = imgElem.replace("[#IMAGEPATH]", altFileImg)
                               .replace("[#STYLEID]", altFileStyle)
-                              .replace("[#SEARCHTERM]", altFileImgName);
+                              .replace("[#SEARCHTERM]", altFileImgName + " ("+ppi+"ppi)");
     resultsHTML += imgElemPrepared;
     cardCount++;
 

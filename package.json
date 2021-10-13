@@ -1,7 +1,7 @@
 {
   "name": "mtg-card-search",
   "productName": "MTG Card Search",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "An Electron application to search through a digital mtg collection",
   "main": "main.js",
   "scripts": {
@@ -31,7 +31,8 @@
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
-    "find": "^0.3.0"
+    "find": "^0.3.0",
+    "image-size": "^1.0.0"
   },
   "build": {
     "appId": "com.stevemtg.mtgcardsearch",
