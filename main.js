@@ -127,14 +127,13 @@ var getFileNameFromPath = function(path) {
 
 var walk = function(dir) {
     var results = [];
-    var list = fs.readdirSync(dir);
-    list.forEach(function(file) {
-        file = dir + '/' + file;
-        var stat = fs.statSync(file);
-        if (stat && stat.isDirectory()) {
+    var list = fs.readdirSync(dir, {withFileTypes: true});
+    list.forEach(function(dirent) {
+        const file = dir + '/' + dirent.name;
+        if (dirent.isDirectory()) {
             /* Recurse into a subdirectory */
             results = results.concat(walk(file));
-        } else {
+        } else if (dirent.isFile()) {
             /* Is a file */
             results.push(file);
         }
