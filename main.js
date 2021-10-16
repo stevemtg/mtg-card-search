@@ -41,7 +41,11 @@ ipc.on('getCopyPath', function(event, data){
 
 
 ipc.on('findImages', function(event, data){
-  var allFiles = walk(selectedSearchPath);
+  const allFiles = walk(selectedSearchPath).map(fileName => {
+    const imageName = "" + getFileNameFromPath(fileName);
+    return [normalizeCardName(imageName), fileName];
+  });
+
   cards = [];
 
   //Start of the search for files.
@@ -55,8 +59,6 @@ ipc.on('findImages', function(event, data){
         return;
     }
 
-    card = {searchTerm:inputLine, filePath:"", alternateFiles:[]};
-
     // Extract the quantity and card name.
     // Cockatrice prefixes lines with "SB:" for sideboard cards, so optionally matching that.
     // MTGA's export format puts the set and collector number in the line. ex. Arid Mesa (ZEN) 211
@@ -66,23 +68,25 @@ ipc.on('findImages', function(event, data){
       return;
     }
 
-    let [, quantity, inputCardName] = extract;
+    const card = {
+      searchTerm: inputLine,
+      filePath: "",
+      alternateFiles: [],
+      quantity: extract[1],
+      cardName: extract[2],
+      normalizedCardName: normalizeCardName(extract[2]),
+      // Add a number to the end of each ID to make them unique for multiples of the same card name.
+      styleID: normalizeCardName(inputLine).replace(/\s/g, '') + "----" + cardCount, //remove empty space from search term to use as id.
+    };
 
-    // Search for a file.
-    var foundFileName = "";
-    allFiles.forEach(fileName => {
-      var imageName = "" + getFileNameFromPath(fileName);
+    // Search for files
+    card.alternateFiles = allFiles.filter(([normalizedCardName, fileName]) =>
+      normalizedCardName.includes(card.normalizedCardName)
+    ).map(([_, fileName]) => fileName);
 
-      if (normalizeCardName(imageName).includes(normalizeCardName(inputCardName))) {
-        foundFileName = fileName;
-        card.filePath = fileName;
-        // Add a number to the end of each ID to make them unique for multiples of the same card name.
-        card.styleID = normalizeCardName(inputLine).replace(/\s/g, '') + "----" + cardCount; //remove empty space from search term to use as id.
-        card.alternateFiles.push(fileName);
-        return;
-      }
-    });
-
+    if (card.alternateFiles.length > 0) {
+      card.filePath = card.alternateFiles.reduce((a, b) => a.length <= b.length ? a : b);
+    }
 
     cards.push(card);
     cardCount++;
@@ -127,14 +131,13 @@ var getFileNameFromPath = function(path) {
 
 var walk = function(dir) {
     var results = [];
-    var list = fs.readdirSync(dir);
-    list.forEach(function(file) {
-        file = dir + '/' + file;
-        var stat = fs.statSync(file);
-        if (stat && stat.isDirectory()) {
+    var list = fs.readdirSync(dir, {withFileTypes: true});
+    list.forEach(function(dirent) {
+        const file = dir + '/' + dirent.name;
+        if (dirent.isDirectory()) {
             /* Recurse into a subdirectory */
             results = results.concat(walk(file));
-        } else {
+        } else if (dirent.isFile()) {
             /* Is a file */
             results.push(file);
         }
